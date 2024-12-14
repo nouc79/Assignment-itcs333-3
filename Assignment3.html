@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript: API Data Retrieval and Visualization</title>
+    <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@1.*/css/pico.min.css">
+    <style>
+        body {
+            margin: 20px;
+            font-family: 'Arial', sans-serif;
+            background-color: #f9f9f9;
+        }
+        h1, h2, h3 {
+            text-align: center;
+            color: #4a4a4a;
+        }
+        table {
+            margin-top: 20px;
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+        thead {
+            background-color: #ececec;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            font-weight: bold;
+            color: #333;
+        }
+        tr:nth-child(even) {
+            background-color: #f4f4f4;
+        }
+        tr:hover {
+            background-color: #e0f7fa;
+        }
+        .table-container {
+            overflow-x: auto;
+            padding: 10px;
+            border-radius: 8px;
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <!-- Assignment Details -->
+    <h1>JavaScript: API Data Retrieval and Visualization</h1>
+    <h3><strong>Due Date:</strong> Saturday, 14/12/2024</h3>
+    <h3><strong>Institute:</strong> University of Bahrain</h3>
+    <h3><strong>Topic:</strong> Assignment</h3>
+    <hr>
+
+    <!-- Data Table -->
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Year</th>
+                    <th>Semester</th>
+                    <th>The programs</th>
+                    <th>Nationality</th>
+                    <th>Colleges</th>
+                    <th>Num of Student</th>
+                </tr>
+            </thead>
+            <tbody id="data-table">
+                <!-- Dynamic data will be inserted here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const URL = "https://data.gov.bh/api/explore/v2.1/catalog/datasets/01-statistics-of-students-nationalities_updated/records?where=colleges%20like%20%22IT%22%20AND%20the_programs%20like%20%22bachelor%22&limit=100";
+
+        // Fetch data from the API
+        fetch(URL)
+            .then(response => response.json())
+            .then(data => {
+                const records = data.records || [];
+                const tableBody = document.getElementById('data-table');
+
+                // Check if records are available
+                if (records.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="6">No data found.</td></tr>';
+                    return;
+                }
+
+                // Populate the table with data
+                records.forEach(record => {
+                    const row = document.createElement('tr');
+
+                    row.innerHTML = `
+                        <td>${record.fields.Year || 'N/A'}</td>
+                        <td>${record.fields.Semester || 'N/A'}</td>
+                        <td>${record.fields["The programs"] || 'N/A'}</td>
+                        <td>${record.fields.Nationality || 'N/A'}</td>
+                        <td>${record.fields.Colleges || 'N/A'}</td>
+                        <td>${record.fields["Num of Student"] || 'N/A'}</td>
+                    `;
+
+                    tableBody.appendChild(row);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+                const tableBody = document.getElementById('data-table');
+                tableBody.innerHTML = '<tr><td colspan="6">Error fetching data from API.</td></tr>';
+            });
+    </script>
+</body>
+</html>
